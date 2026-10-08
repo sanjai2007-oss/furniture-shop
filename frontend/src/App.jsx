@@ -1,12 +1,10 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/common/ProtectedRoute';
+
 import AppLayout from './components/layout/AppLayout';
 import { CircularProgress, Box } from '@mui/material';
-
 // Pages — eagerly loaded for instant navigation
-import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Inventory from './pages/Inventory';
@@ -31,15 +29,15 @@ const App = () => {
       <AuthProvider>
         <Routes>
           {/* Public Route */}
-          <Route path="/login" element={<Login />} />
+          
 
           {/* Protected Routes inside AppLayout */}
           <Route
             path="/"
             element={
-              <ProtectedRoute>
+              
                 <AppLayout />
-              </ProtectedRoute>
+              
             }
           >
             <Route index element={<Navigate to="/dashboard" replace />} />
