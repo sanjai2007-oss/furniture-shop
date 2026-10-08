@@ -9,14 +9,24 @@ from app.models.product import Product
 from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryResponse
 from app.schemas.common import ApiResponse
 
-router = APIRouter(prefix="/api/categories", tags=["Categories"])
+
+router = APIRouter(
+    prefix="/api/categories",
+    tags=["Categories"]
+)
 
 
 @router.get("", response_model=ApiResponse[List[CategoryResponse]])
-def get_categories(db: Session = Depends(get_db)):
-    """Retrieves all categories with product counts."""
+def get_categories(
+    db: Session = Depends(get_db)
+):
+    """Retrieve all categories with product counts."""
 
-    categories = db.query(Category).order_by(Category.name.asc()).all()
+    categories = (
+        db.query(Category)
+        .order_by(Category.name.asc())
+        .all()
+    )
 
     results = []
 
@@ -28,16 +38,16 @@ def get_categories(db: Session = Depends(get_db)):
             or 0
         )
 
-        cat_resp = CategoryResponse(
-            id=cat.id,
-            name=cat.name,
-            description=cat.description,
-            created_at=cat.created_at,
-            updated_at=cat.updated_at,
-            product_count=count
+        results.append(
+            CategoryResponse(
+                id=cat.id,
+                name=cat.name,
+                description=cat.description,
+                created_at=cat.created_at,
+                updated_at=cat.updated_at,
+                product_count=count
+            )
         )
-
-        results.append(cat_resp)
 
     return ApiResponse(
         success=True,
@@ -49,9 +59,9 @@ def get_categories(db: Session = Depends(get_db)):
 @router.post("", response_model=ApiResponse[CategoryResponse])
 def create_category(
     category_in: CategoryCreate,
-    db: Session = get_db()
+    db: Session = Depends(get_db)
 ):
-    """Creates a new category."""
+    """Create a new category."""
 
     existing = (
         db.query(Category)
@@ -92,9 +102,9 @@ def create_category(
 def update_category(
     category_id: int,
     category_in: CategoryUpdate,
-    db: Session = get_db()
+    db: Session = Depends(get_db)
 ):
-    """Updates an existing category."""
+    """Update an existing category."""
 
     category = (
         db.query(Category)
@@ -156,9 +166,9 @@ def update_category(
 @router.delete("/{category_id}", response_model=ApiResponse[dict])
 def delete_category(
     category_id: int,
-    db: Session = get_db()
+    db: Session = Depends(get_db)
 ):
-    """Deletes a category."""
+    """Delete a category."""
 
     category = (
         db.query(Category)
